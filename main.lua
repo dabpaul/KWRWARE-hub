@@ -1,11 +1,13 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local success, err = pcall(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/main/main.lua"))()
+local success, result = pcall(function()
+    return loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/main/main.lua"))()
 end)
 
 if not success then
-    warn("Failed to load remote script:", err)
+    warn("[KWRWARE] Failed to load script:", result)
+else
+    print("[KWRWARE] Script loaded successfully.")
 end
 
 local Window = Rayfield:CreateWindow({
