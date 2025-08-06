@@ -1,15 +1,5 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
-local success, result = pcall(function()
-    return loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/main/main.lua"))()
-end)
-
-if not success then
-    warn("[KWRWARE] Failed to load script:", result)
-else
-    print("[KWRWARE] Script loaded successfully.")
-end
-
 local Window = Rayfield:CreateWindow({
     Name = "KWRware",
     Icon = 0,  -- Icon in Topbar. Use Lucide Icons (string) or Roblox Image (number). 0 = no icon
