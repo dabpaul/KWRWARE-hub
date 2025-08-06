@@ -1,20 +1,10 @@
- local http_service = game:GetService("HttpService")
-    local raw_script_url = "loadstring(game:HttpGet(https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/refs/heads/main/main.lua))()"
+local success, err = pcall(function()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/main/main.lua"))()
+end)
 
-    local success, content = pcall(function()
-        return http_service:GetAsync(raw_script_url)
-    end)
-
-    if success then
-        local func = loadstring(content)
-        if func then
-            func()
-        else
-            warn("Failed to create function from loaded string.")
-        end
-    else
-        warn("Failed to fetch script from GitHub:", content)
-    end
+if not success then
+    warn("Failed to load remote script:", err)
+end
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
