@@ -1,6 +1,6 @@
 -- loader.lua (public, NOT obfuscated)
 local success, response = pcall(function()
-    return game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/refs/heads/main/loader%20(1).lua")
+    return game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/refs/heads/main/core%20(1).lua")
 end)
 
 if success and response then
