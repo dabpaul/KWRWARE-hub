@@ -1,5 +1,5 @@
 local success, err = pcall(function()
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/refs/heads/main/main.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/dabpaul/KWRWARE-hub/main/main.lua"))()
 end)
 
 if not success then
