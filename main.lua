@@ -1,11 +1,4 @@
-local success, Rayfield = pcall(function()
-    return loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-end)
-
-if not success or not Rayfield then
-    warn("Failed to load Rayfield")
-    return
-end
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
     Name = "KWRware",
@@ -55,6 +48,22 @@ Rayfield:Notify({
 
 })
 
+-- === gamename & placeid ===
+-- 3008 tab  
+-- Baddies
+-- Steal A Brainrot 
+-- Basketball Legends 
+-- Type://Soul Tab 
+-- Pure Soccer Tab 
+-- Total Drama Island Tab 
+-- South Bronx Tab 
+-- The Strongest Battlegrounds 
+-- Jailbreak Tab 
+-- Gunfight Arena Tab - 14518422161
+-- Grow a Garden Tab - 126884695634066
+-- 99 nights Tab 
+
+
 -- Game check helper function (specific per script)
 local function isCurrentGame(placeId)
     return game.PlaceId == placeId
@@ -78,6 +87,184 @@ tabMain:CreateButton({
 })
 
 local Paragraph = tabMain:CreateParagraph({Title = "Update log", Content = "1.0A"})
+
+local Toggle = tabMain:CreateToggle({
+    Name = "Infinite Jump",
+    CurrentValue = false,
+    Flag = "Toggle1",
+    Callback = function(Value)
+        local Player = game.Players.LocalPlayer
+        local UserInputService = game:GetService("UserInputService")
+
+        -- Disconnect previous connection if needed (optional)
+        if _G.InfiniteJumpConnection then
+            _G.InfiniteJumpConnection:Disconnect()
+            _G.InfiniteJumpConnection = nil
+        end
+
+        if Value then
+            _G.InfiniteJumpConnection = UserInputService.JumpRequest:Connect(function()
+                if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+                    Player.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end)
+        end
+    end,
+})
+
+
+local Slider = tabMain:CreateSlider({
+   Name = "WalkSpeed Slider",
+   Range = {0, 300},
+   Increment = 1,
+   Suffix = "Speed",
+   CurrentValue = 16,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)            
+   end,
+})
+
+local Slider = tabMain:CreateSlider({
+   Name = "JumpPower Slider",
+   Range = {0, 1000},
+   Increment = 1,
+   Suffix = "Jump Power",
+   CurrentValue = 50,
+   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)            
+   end,
+})
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+local HBE_Enabled = false
+local HBE_Size = 7
+local HBE_TeamCheck = false
+
+
+local function expandHitbox(player)
+    if player == LocalPlayer then return end
+    if HBE_TeamCheck and player.Team == LocalPlayer.Team then return end
+
+    local character = player.Character
+    if not character then return end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart")
+    if hrp then
+        hrp.Size = Vector3.new(HBE_Size, HBE_Size, HBE_Size)
+        hrp.Transparency = 0.8
+        hrp.Material = Enum.Material.Neon
+        hrp.CanCollide = false
+    end
+end
+
+RunService.Heartbeat:Connect(function()
+    if HBE_Enabled then
+        for _, player in ipairs(Players:GetPlayers()) do
+            expandHitbox(player)
+        end
+    end
+end)
+
+local Paragraph = tabMain:CreateParagraph({Title = "===HBE===", Content = "Down here is HBE related"})
+
+local Toggle = tabMain:CreateToggle({
+   Name = "Hitbox Expander",
+   CurrentValue = false,
+   Flag = "Toggle_HBE",
+   Callback = function(Value)
+    HBE_Enabled = Value
+
+    if Value then
+        Rayfield:Notify({
+            Title = "Hitbox Expander Enabled",
+            Content = "Hitboxes have been expanded.",
+            Duration = 3,
+        })
+    else
+        Rayfield:Notify({
+            Title = "Hitbox Expander Disabled",
+            Content = "Hitboxes have been reset to normal.",
+            Duration = 3,
+        })
+
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Team ~= LocalPlayer.Team and player.Character then
+                local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    hrp.Size = Vector3.new(2, 2, 1)
+                    hrp.Transparency = 1
+                    hrp.Material = Enum.Material.Plastic
+                end
+            end
+        end
+    end
+end,
+
+})
+
+local Keybind = tabMain:CreateKeybind({
+    Name = "Toggle Hitbox (Keybind)",
+    CurrentKeybind = "Y",
+    HoldToInteract = false,
+    Flag = "Keybind_Hitbox",
+    Callback = function()
+        HBE_Enabled = not HBE_Enabled
+
+        Rayfield:Notify({
+            Title = "Hitbox Expander",
+            Content = HBE_Enabled and "Enabled" or "Disabled",
+            Duration = 3,
+        })
+
+        if not HBE_Enabled then
+            for _, player in ipairs(Players:GetPlayers()) do
+                if player ~= LocalPlayer and player.Character then
+                    local hrp = player.Character:FindFirstChild("HumanoidRootPart")
+                    if hrp then
+                        hrp.Size = Vector3.new(2, 2, 1)
+                        hrp.Transparency = 1
+                        hrp.Material = Enum.Material.Plastic
+                        hrp.CanCollide = true
+                    end
+                end
+            end
+        end
+    end,
+})
+
+
+local TeamCheckToggle = tabMain:CreateToggle({
+    Name = "Team Check",
+    CurrentValue = true,
+    Flag = "Toggle_TeamCheck",
+    Callback = function(Value)
+        HBE_TeamCheck = Value
+
+        Rayfield:Notify({
+            Title = "Team Check " .. (Value and "Enabled" or "Disabled"),
+            Content = Value and "Only enemies will be affected." or "All players will be affected.",
+            Duration = 3,
+        })
+    end,
+})
+
+
+local Slider = tabMain:CreateSlider({
+   Name = "Hitbox Size",
+   Range = {3, 50},
+   Increment = 0.5,
+   Suffix = "Size",
+   CurrentValue = 7,
+   Flag = "Slider_HBE_Size",
+   Callback = function(Value)
+      HBE_Size = Value
+   end,
+})
 
 -- === Universal ===
 
