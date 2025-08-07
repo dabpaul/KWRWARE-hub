@@ -49,22 +49,21 @@ Rayfield:Notify({
 })
 
 -- === gamename & placeid ===
--- 3008 tab  
--- Baddies
--- Steal A Brainrot 
--- Basketball Legends 
--- Type://Soul Tab 
--- Pure Soccer Tab 
--- Total Drama Island Tab 
--- South Bronx Tab 
--- The Strongest Battlegrounds 
--- Jailbreak Tab 
+-- 3008 tab - 2768379856
+-- Baddies - 11158043705
+-- Steal Brainrot - 109983668079237
+-- Basketball Legends - 14259168147
+-- Type://Soul Tab - 14067600077
+-- Pure Soccer Tab - 88920112778598
+-- Total Roblox Island Tab - 4889315193
+-- South Bronx Tab - 10179538382
+-- The Strongest Battlegrounds - 10449761463
+-- Jailbreak Tab - 606849621
 -- Gunfight Arena Tab - 14518422161
 -- Grow a Garden Tab - 126884695634066
--- 99 nights Tab 
+-- 99 nights Tab - 79546208627805
 
 
--- Game check helper function (specific per script)
 local function isCurrentGame(placeId)
     return game.PlaceId == placeId
 end
@@ -86,7 +85,9 @@ tabMain:CreateButton({
     end,
 })
 
-local Paragraph = tabMain:CreateParagraph({Title = "Update log", Content = "1.0A"})
+local Paragraph = tabMain:CreateParagraph({Title = "Update log", Content = "1.0"})
+
+local Paragraph = tabMain:CreateParagraph({Title = "===WARNING===", Content = "using any of the buttons we have down there, there is a risk of getting banned in the game if they got an anticheat for the specific buttons we have in maintab"})
 
 local Toggle = tabMain:CreateToggle({
     Name = "Infinite Jump",
@@ -113,29 +114,106 @@ local Toggle = tabMain:CreateToggle({
 })
 
 
-local Slider = tabMain:CreateSlider({
-   Name = "WalkSpeed Slider",
-   Range = {0, 300},
-   Increment = 1,
-   Suffix = "Speed",
-   CurrentValue = 16,
-   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = (Value)            
+local WalkSpeedValue = 16
+local player = game.Players.LocalPlayer
+
+local function applyWalkSpeed()
+    local char = player.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.WalkSpeed = WalkSpeedValue
+    end
+end
+
+WalkSpeedInput = tabMain:CreateInput({
+   Name = "WalkSpeed",
+   CurrentValue = tostring(WalkSpeedValue),
+   PlaceholderText = "Enter WalkSpeed",
+   RemoveTextAfterFocusLost = false,
+   Flag = "WalkSpeedInput",
+   Callback = function(Text)
+       local value = tonumber(Text)
+       if value then
+           WalkSpeedValue = value
+           if player.Character and player.Character:FindFirstChild("Humanoid") then
+               player.Character.Humanoid.WalkSpeed = WalkSpeedValue
+           end
+       end
    end,
 })
 
-local Slider = tabMain:CreateSlider({
-   Name = "JumpPower Slider",
-   Range = {0, 1000},
-   Increment = 1,
-   Suffix = "Jump Power",
-   CurrentValue = 50,
-   Flag = "Slider1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
-   Callback = function(Value)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = (Value)            
+
+player.CharacterAdded:Connect(function()
+    task.wait(0.5) 
+    applyWalkSpeed()
+end)
+
+
+local JumpPowerValue = 50 
+
+local function applyJumpPower()
+    local char = player.Character
+    if char and char:FindFirstChild("Humanoid") then
+        char.Humanoid.JumpPower = JumpPowerValue
+    end
+end
+
+JumpPowerInput = tabMain:CreateInput({
+   Name = "JumpPower",
+   CurrentValue = tostring(JumpPowerValue),
+   PlaceholderText = "Enter JumpPower",
+   RemoveTextAfterFocusLost = false,
+   Flag = "JumpPowerInput",
+   Callback = function(Text)
+       local value = tonumber(Text)
+       if value then
+           JumpPowerValue = value
+           if player.Character and player.Character:FindFirstChild("Humanoid") then
+               player.Character.Humanoid.JumpPower = JumpPowerValue
+           end
+       end
    end,
 })
+
+
+tabMain:CreateButton({
+    Name = "Reset WalkSpeed",
+    Callback = function()
+        WalkSpeedValue = 16
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = WalkSpeedValue
+        end
+        WalkSpeedInput:Set(tostring(WalkSpeedValue))
+        Rayfield:Notify({
+            Title = "Reset",
+            Content = "WalkSpeed has been reset to 16",
+            Duration = 2.5,
+        })
+    end,
+})
+
+tabMain:CreateButton({
+    Name = "Reset JumpPower",
+    Callback = function()
+        JumpPowerValue = 50
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = JumpPowerValue
+        end
+        JumpPowerInput:Set(tostring(JumpPowerValue))
+        Rayfield:Notify({
+            Title = "Reset",
+            Content = "JumpPower has been reset to 50",
+            Duration = 2.5,
+        })
+    end,
+})
+
+
+
+player.CharacterAdded:Connect(function()
+    task.wait(0.5)
+    applyJumpPower()
+end)
+
 
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
@@ -170,7 +248,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
-local Paragraph = tabMain:CreateParagraph({Title = "===HBE===", Content = "Down here is HBE related"})
+local Paragraph = tabMain:CreateParagraph({Title = "===HBE===", Content = "Down here is HBE related (wont work in some games)"})
 
 local Toggle = tabMain:CreateToggle({
    Name = "Hitbox Expander",
@@ -240,7 +318,7 @@ local Keybind = tabMain:CreateKeybind({
 
 local TeamCheckToggle = tabMain:CreateToggle({
     Name = "Team Check",
-    CurrentValue = true,
+    CurrentValue = false,
     Flag = "Toggle_TeamCheck",
     Callback = function(Value)
         HBE_TeamCheck = Value
@@ -275,11 +353,33 @@ tabUniversal:CreateButton({
     Callback = function()
         -- Work in Progress
         Rayfield:Notify({
-            Title = "Executed!",
-            Content = "Script Executed.",
+            Title = "WIP",
+            Content = "Work In Progress.",
             Duration = 2.5,
             Image = nil,
         })  
+    end,
+})
+
+-- === 3008 Tab ===
+local tab3008 = Window:CreateTab("3008", nil)
+tab3008:CreateSection("Scripts")
+tab3008:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(2768379856) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
     end,
 })
 
@@ -287,196 +387,20 @@ tabUniversal:CreateButton({
 local tab99nights = Window:CreateTab("99 nights", nil)
 tab99nights:CreateSection("Scripts")
 tab99nights:CreateButton({
-    Name = "eF Hub",
+    Name = "WIP",
     Callback = function()
-        local success, result = pcall(function()
-            loadstring(game:HttpGet('https://api.exploitingis.fun/loader', true))()
-        end)
-        
-        if success then
-            Rayfield:Notify({
-                Title = "Executed!",
-                Content = "eF Hub loaded successfully.",
-                Duration = 2.5,
-                Image = nil,
-            })
-        else
-            
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Failed to load eF Hub: " .. result,
-                Duration = 3,
-                Image = nil,
-            })
-        end
-    end,
-})
-
-
--- === Grow a Garden Tab ===
-local tabGarden = Window:CreateTab("Grow a Garden", nil)
-tabGarden:CreateSection("Scripts")
-
-tabGarden:CreateButton({
-    Name = "Blackhub",
-    Callback = function()
-        if not isCurrentGame(126884695634066) then
+        if not isCurrentGame(79546208627805) then
             Rayfield:Notify({
                 Title = "Game Not Supported",
                 Content = "This script is not supported in this game.",
                 Duration = 3,
-                Image = nil,
             })
             return
         end
-        
-        local success, result = pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/Skibidiking123/Fisch1/refs/heads/main/FischMain"))()
-        end)
-        
-        if success then
-            Rayfield:Notify({
-                Title = "Executed!",
-                Content = "Blackhub loaded successfully.",
-                Duration = 2.5,
-                Image = nil,
-            })
-        else
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Failed to load Blackhub: " .. result,
-                Duration = 3,
-                Image = nil,
-            })
-        end
-    end,
-})
-
--- === Gunfight Arena Tab ===
-local tabGunfight = Window:CreateTab("Gunfight Arena", nil)
-tabGunfight:CreateSection("Scripts")
-
-tabGunfight:CreateButton({
-    Name = "elite hub",
-    Callback = function()
-        if not isCurrentGame(14518422161) then
-            Rayfield:Notify({
-                Title = "Game Not Supported",
-                Content = "This script is not supported in this game.",
-                Duration = 3,
-                Image = nil,
-            })
-            return
-        end
-        
-        local success, result = pcall(function()
-            loadstring(game:HttpGet("https://pastefy.app/6kD0H2i4/raw"))()
-        end)
-        
-        if success then
-            Rayfield:Notify({
-                Title = "Executed!",
-                Content = "elite hub loaded successfully.",
-                Duration = 2.5,
-                Image = nil,
-            })
-        else
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Failed to load elite hub: " .. result,
-                Duration = 3,
-                Image = nil,
-            })
-        end
-    end,
-})
-
--- === Jailbreak Tab ===
-local tabJailbreak = Window:CreateTab("Jailbreak", nil)
-tabJailbreak:CreateSection("Scripts")
-tabJailbreak:CreateButton({
-    Name = "WIP",
-    Callback = function()
         Rayfield:Notify({
             Title = "WIP",
             Content = "Work In Progress",
             Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === The Strongest Battlegrounds Tab ===
-local tabStrongestBattlegrounds = Window:CreateTab("The Strongest Battlegrounds", nil)
-tabStrongestBattlegrounds:CreateSection("Scripts")
-tabStrongestBattlegrounds:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === South Bronx Tab ===
-local tabSouthBronx = Window:CreateTab("South Bronx", nil)
-tabSouthBronx:CreateSection("Scripts")
-tabSouthBronx:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === Total Drama Island Tab ===
-local tabTotalDramaIsland = Window:CreateTab("Total Drama Island", nil)
-tabTotalDramaIsland:CreateSection("Scripts")
-tabTotalDramaIsland:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === Pure Soccer Tab ===
-local tabPureSoccer = Window:CreateTab("Pure Soccer", nil)
-tabPureSoccer:CreateSection("Scripts")
-tabPureSoccer:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === Type://Soul Tab ===
-local tabTypeSoul = Window:CreateTab("Type://Soul", nil)
-tabTypeSoul:CreateSection("Scripts")
-tabTypeSoul:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
         })
     end,
 })
@@ -487,41 +411,18 @@ tabBasketballLegends:CreateSection("Scripts")
 tabBasketballLegends:CreateButton({
     Name = "WIP",
     Callback = function()
+        if not isCurrentGame(14259168147) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
         Rayfield:Notify({
             Title = "WIP",
             Content = "Work In Progress",
             Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === Steal A Brainrot Tab ===
-local tabStealABrainrot = Window:CreateTab("Steal A Brainrot", nil)
-tabStealABrainrot:CreateSection("Scripts")
-tabStealABrainrot:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
-        })
-    end,
-})
-
--- === 3008 Tab ===
-local tab3008 = Window:CreateTab("3008", nil)
-tab3008:CreateSection("Scripts")
-tab3008:CreateButton({
-    Name = "WIP",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "WIP",
-            Content = "Work In Progress",
-            Duration = 2.5,
-            Image = nil,
         })
     end,
 })
@@ -532,11 +433,216 @@ tabBaddies:CreateSection("Scripts")
 tabBaddies:CreateButton({
     Name = "WIP",
     Callback = function()
+        if not isCurrentGame(11158043705) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
         Rayfield:Notify({
             Title = "WIP",
             Content = "Work In Progress",
             Duration = 2.5,
-            Image = nil,
+        })
+    end,
+})
+
+-- === Grow a Garden Tab ===
+local tabGrowaGarden = Window:CreateTab("Grow a Garden", nil)
+tabGrowaGarden:CreateSection("Scripts")
+tabGrowaGarden:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(126884695634066) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Gunfight Arena Tab ===
+local tabGunfightArena = Window:CreateTab("Gunfight Arena", nil)
+tabGunfightArena:CreateSection("Scripts")
+tabGunfightArena:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(14518422161) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Jailbreak Tab ===
+local tabJailbreak = Window:CreateTab("Jailbreak", nil)
+tabJailbreak:CreateSection("Scripts")
+tabJailbreak:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(606849621) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Pure Soccer Tab ===
+local tabPureSoccer = Window:CreateTab("Pure Soccer", nil)
+tabPureSoccer:CreateSection("Scripts")
+tabPureSoccer:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(88920112778598) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === South Bronx Tab ===
+local tabSouthBronx = Window:CreateTab("South Bronx", nil)
+tabSouthBronx:CreateSection("Scripts")
+tabSouthBronx:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(10179538382) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Steal A Brainrot Tab ===
+local tabStealABrainrot = Window:CreateTab("Steal A Brainrot", nil)
+tabStealABrainrot:CreateSection("Scripts")
+tabStealABrainrot:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(109983668079237) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === The Strongest Battlegrounds Tab ===
+local tabTheStrongestBattlegrounds = Window:CreateTab("The Strongest Battlegrounds", nil)
+tabTheStrongestBattlegrounds:CreateSection("Scripts")
+tabTheStrongestBattlegrounds:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(10449761463) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Total Roblox Island Tab ===
+local tabTotalRobloxIsland = Window:CreateTab("Total Roblox Island", nil)
+tabTotalRobloxIsland:CreateSection("Scripts")
+tabTotalRobloxIsland:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(4889315193) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
+        })
+    end,
+})
+
+-- === Type://Soul Tab ===
+local tabTypeSoul = Window:CreateTab("Type://Soul", nil)
+tabTypeSoul:CreateSection("Scripts")
+tabTypeSoul:CreateButton({
+    Name = "WIP",
+    Callback = function()
+        if not isCurrentGame(14067600077) then
+            Rayfield:Notify({
+                Title = "Game Not Supported",
+                Content = "This script is not supported in this game.",
+                Duration = 3,
+            })
+            return
+        end
+        Rayfield:Notify({
+            Title = "WIP",
+            Content = "Work In Progress",
+            Duration = 2.5,
         })
     end,
 })
